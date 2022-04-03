@@ -1,6 +1,6 @@
 # VM mock
 
-`mscl-vm-mock` is a tool to unit test your smart contrat simulating Massa VM using as-pect.
+`mscl-vm-mock` is a tool to unit test your smart contract simulating Massa VM using [as-pect](https://tenner-joshua.gitbook.io/as-pect/).
 
 ## Description
 
@@ -28,4 +28,4 @@ imports(memory, createImports, instantiateSync, binary) {
 
 ## Troubleshooting
 
-//TODO create a how-to for unemplemented assembly_script_XXX
+//TODO create a how-to for unimplemented assembly_script_XXX

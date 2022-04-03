@@ -4,6 +4,8 @@ module.exports = {
     'es2021': true,
   },
   'extends': [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/recommended',
     'google',
   ],
   'parser': '@typescript-eslint/parser',
@@ -13,7 +15,9 @@ module.exports = {
   },
   'plugins': [
     '@typescript-eslint',
+    'prettier',
   ],
   'rules': {
+      '@typescript-eslint/ban-ts-comment': 'off',
   },
 };
