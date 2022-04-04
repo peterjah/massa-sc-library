@@ -1,0 +1,29 @@
+{
+  "name": "mscl-vm-mock",
+  "version": "0.0.1",
+  "description": "A mocker to unit test massa smart contract using [as-pect](https://tenner-joshua.gitbook.io/as-pect/).",
+  "main": "index.js",
+  "exports": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "fmt": "prettier --write '{*,**/*}.{js,ts,jsx,tsx,json}'",
+    "lint:fix": "eslint --fix --ext .ts . && yarn fmt",
+    "lint": "eslint --ext .ts . && prettier --check '{*,**/*}.{js,ts,jsx,tsx,json}'"
+  },
+  "author": "Grégory Libert greg_libert@yahoo.fr",
+  "private": "true",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.17.0",
+    "@typescript-eslint/parser": "^5.17.0",
+    "assemblyscript": "^0.20.3",
+    "eslint": "^8.12.0",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^38.1.6",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.3"
+  },
+  "type": "commonjs"
+}
