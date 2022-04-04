@@ -16,13 +16,13 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
   const myImports = {
     massa: {
       // Those functions will be called from an external WebAssembly module.
-      // Head objects, such as strings, can only be accessed by reading 
-        // heap memory starting at the given pointer (X_ptr variable).
+      // Head objects, such as strings, can only be accessed by reading
+      // heap memory starting at the given pointer (X_ptr variable).
       //
       // To read the module heap, __getString function is used.
       //
       // To return a heap object, such as strings, we push first the object to
-        // the heap and then we return the pointer.
+      // the heap and then we return the pointer.
       //
       // See assembly_script_get_data, it's read and return string.
       assembly_script_has_data(k_ptr) {
