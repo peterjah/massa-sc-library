@@ -69,6 +69,37 @@ export class Currency implements Valider {
   }
 
   /**
+   * Returns the offset of the next element after having parsed an address from a string segment.
+   *
+   * The string segment can contains more thant on serialized element.
+   *
+   * @param {string} bs
+   * @param {i32} begin
+   * @return {i32}
+   */
+  fromStringSegment(bs: string, begin: i32=0): i32 {
+    const length = u8(bs.codePointAt(begin));
+    const c = Currency.fromByteString(bs.slice(begin+1, begin+length+1));
+    this._name = c._name;
+    this._minorUnit = c._minorUnit;
+    this._isValid = c._isValid;
+    return begin + length+1;
+  }
+
+  /**
+    * Returns a string segment.
+    *
+    * The string segment can be concatenated with others to serialize multiple elements.
+    *
+    * @return {string}
+    */
+  toStringSegment(): string {
+    const bs = this.toByteString();
+    return String.fromCharCode(u8(bs.length)).concat(bs);
+  }
+
+
+  /**
    * Returns a Currency from a byte string.
    *
    * Format is:
@@ -84,6 +115,14 @@ export class Currency implements Valider {
     const a = ByteArray.fromByteString(bs);
 
     return this.fromByteArray(a);
+  }
+
+  /**
+   * Serializes to byte string.
+   * @return {string}
+   */
+  toByteString(): string {
+    return this.toByteArray().toByteString();
   }
 
   /**
@@ -110,7 +149,7 @@ export class Currency implements Valider {
   }
 
   /**
-   * Serialize to ByteArray.
+   * Serializes to ByteArray.
    * @return {ByteArray}
    */
   toByteArray(): ByteArray {

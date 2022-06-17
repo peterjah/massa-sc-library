@@ -20,6 +20,21 @@ describe('Doc tests', () => {
     const rawByteString = raw.toByteString();
     expect<number>(rawByteString.length).toBe(8);
     expect<Currency>(Currency.fromByteString(rawByteString)).toBe(c1);
+
+    // stringSegment
+    let rawStringSegment = c1.toStringSegment();
+    rawStringSegment = rawStringSegment.concat(rawStringSegment);
+    expect<number>(rawStringSegment.length).toBe(18);
+
+    const c3 = new Currency();
+
+    const offset = c3.fromStringSegment(rawStringSegment);
+    expect<Currency>(c3).toBe(c1);
+    expect<number>(offset).toBe(9);
+
+    const c4 = new Currency();
+    c4.fromStringSegment(rawStringSegment, offset);
+    expect<Currency>(c4).toBe(c1);
   });
 });
 

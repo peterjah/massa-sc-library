@@ -13,16 +13,43 @@ export class Address implements Valider {
    *
    * @param {string} bs - Byte string.
    */
-  constructor(
-      bs: string ) {
+  constructor(bs: string ) {
     this._value = bs;
   }
+
   /**
    * Returns if the Address is still valid.
    * @return {bool}
    */
   isValid(): bool {
     return this._value.startsWith('A');
+  }
+
+  /**
+   * Returns the offset of the next element after having parsed an address from a string segment.
+   *
+   * The string segment can contains more thant on serialized element.
+   *
+   * @param {string} bs
+   * @param {i32} begin
+   * @return {i32}
+   */
+  fromStringSegment(bs: string, begin: i32=0): i32 {
+    const length = u8(bs.codePointAt(begin));
+    // return length;
+    this._value = Address.fromByteString(bs.slice(begin+1, begin+length+1)).toByteString();
+    return begin + length+1;
+  }
+
+  /**
+   * Returns a string segment.
+   *
+   * The string segment can be concatenated with others to serialize multiple elements.
+   *
+   * @return {string}
+   */
+  toStringSegment(): string {
+    return String.fromCharCode(u8(this._value.length)).concat(this.toByteString());
   }
 
   /**
