@@ -55,6 +55,14 @@ export class Amount implements Valider {
   }
 
   /**
+   * Returns an invalid amount.
+   * @return {Amount}
+   */
+  static invalid(): Amount {
+    return new Amount(0, Currency.invalid(), false);
+  }
+
+  /**
    * Returns if the Amount is still valid.
    * @return {bool}
    */
@@ -85,12 +93,12 @@ export class Amount implements Valider {
    */
   add(a: Amount): Amount {
     if (!this._matchAndAmounts(a)) {
-      return notAnAmount;
+      return Amount.invalid();
     }
 
     const r = new Amount(this._value + a.value(), this._currency);
 
-    return r.lessThan(a) ? notAnAmount : r;
+    return r.lessThan(a) ? Amount.invalid() : r;
   }
 
   /**
@@ -102,7 +110,7 @@ export class Amount implements Valider {
    */
   substract(a: Amount): Amount {
     if (!this._matchAndAmounts(a) || this.lessThan(a)) {
-      return notAnAmount;
+      return Amount.invalid();
     }
 
     return new Amount(this._value - a.value(), this._currency);
@@ -150,14 +158,14 @@ export class Amount implements Valider {
    */
    static fromByteArray(a: Uint8Array): Amount {
      if (a.length < 10) {
-       return notAnAmount;
+       return Amount.invalid();
      }
 
      const value = ByteArray.fromUint8Array(a.subarray(0, 8)).toU64();
      const currency = Currency.fromByteArray(a.subarray(8));
 
      if (!currency.isValid()) {
-       return notAnAmount;
+       return Amount.invalid();
      }
 
      return new Amount(value, currency);
@@ -203,5 +211,3 @@ export class Amount implements Valider {
     return !(this == other);
   }
 }
-
-const notAnAmount = new Amount(0, new Currency(), false);

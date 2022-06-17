@@ -52,6 +52,15 @@ export class Currency implements Valider {
   }
 
   /**
+   * Returns an invalid currency
+   *
+   * @return {Currency}
+   */
+  static invalid(): Currency {
+    return new Currency('', 0, false);
+  }
+
+  /**
    * Returns if the Amount is still valid.
    * @return {bool}
    */
@@ -91,7 +100,7 @@ export class Currency implements Valider {
    */
   static fromByteArray(a: Uint8Array): Currency {
     if (a.length < 2) {
-      return notACurrency;
+      return Currency.invalid();
     }
 
     const minorUnit = a[0];
@@ -140,5 +149,3 @@ export class Currency implements Valider {
     return !(this == other);
   }
 }
-
-const notACurrency = new Currency('', 0, false);
