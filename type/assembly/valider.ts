@@ -5,5 +5,5 @@
  * the type is no longer meaningful.
  */
 export interface Valider {
-    isValid(): bool
+  isValid(): bool;
 }
