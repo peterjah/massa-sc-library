@@ -7,7 +7,19 @@ describe('Doc tests', () => {
     expect<u8>(c1.minorUnit()).toBe(2);
 
     const c2 = new Currency('Other testing', 2);
-    expect<bool>(c1.sameAs(c2)).toBeFalsy();
+    expect<bool>(c1.equals(c2)).toBeFalsy();
+
+    // serialization / deserialization
+
+    // byteArray
+    const raw = c1.toByteArray();
+    expect<number>(raw.length).toBe(8);
+    expect<Currency>(Currency.fromByteArray(raw)).toBe(c1);
+
+    // byteString
+    const rawByteString = raw.toByteString();
+    expect<number>(rawByteString.length).toBe(8);
+    expect<Currency>(Currency.fromByteString(rawByteString)).toBe(c1);
   });
 });
 
@@ -21,8 +33,8 @@ describe('Black box tests', () => {
   test('same currency', () => {
     const c1 = new Currency('aaaa', 6);
     const c2 = new Currency('aaaa', 6);
-    expect<bool>(c1.sameAs(c2)).toBeTruthy();
-    expect<bool>(c2.sameAs(c1)).toBeTruthy();
-    expect<bool>(c1.sameAs(c1)).toBeTruthy();
+    expect<bool>(c1.equals(c2)).toBeTruthy();
+    expect<bool>(c2.equals(c1)).toBeTruthy();
+    expect<bool>(c1.equals(c1)).toBeTruthy();
   });
 });

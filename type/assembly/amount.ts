@@ -1,15 +1,18 @@
 import {Currency} from './currency';
 import {Valider} from './valider';
-
+import {ByteArray} from './byteArray';
 
 /**
- * Value in currency to express an amount
+ * Value in currency to express an amount.
  *
- * When type is not an amount anymore due to calculation side effect,
- * _notAnAmount flag is set.
+ * For instance $10.34 will be instanciate as the following:
  *
- * To easier type checking, and because Result or Optional type are
- * not yet implemented, this type extends the isNoter interface
+ * const dollar = new Currency("dollar", 2);
+ * const price = new Amount(1034, dollar);
+ *
+ * Note: When type is not an amount anymore due to calculation side effect,
+ * _isValid flag is unset.
+ *
  */
 export class Amount implements Valider {
   _value: u64;
@@ -17,75 +20,71 @@ export class Amount implements Valider {
   _isValid: bool;
 
   /**
-     * Creates a new Amount;
-     *
-     * @param {u64} v - Amount value.
-     * @param {Currency} c - Amount currency.
-     */
-  constructor(v: u64 = 0, c: Currency = new Currency()) {
-    this._value = v;
-    this._currency = c;
-    this._isValid = true;
+   * Creates a new Amount;
+   *
+   * @param {u64} value - Amount value.
+   * @param {Currency} currency - Amount currency.
+   * @param {bool} isValid - Is a valid currency
+   */
+  constructor(
+      value: u64 = 0,
+      currency: Currency = new Currency(),
+      isValid: bool = true
+  ) {
+    this._value = value;
+    this._currency = currency;
+    this._isValid = isValid;
   }
 
   /**
-     * Returns the value of the amount.
-     *
-     * @return {u64}
-     */
+   * Returns the value of the amount.
+   *
+   * @return {u64}
+   */
   value(): u64 {
     return this._value;
   }
 
   /**
-     * Returns the currency of the amount.
-     *
-     * @return {Currency}
-     */
+   * Returns the currency of the amount.
+   *
+   * @return {Currency}
+   */
   currency(): Currency {
     return this._currency;
   }
 
   /**
-     * Returns if the Amount is still valid.
-     * @return {bool}
-     */
-  isValid():bool {
+   * Returns if the Amount is still valid.
+   * @return {bool}
+   */
+  isValid(): bool {
     return this._isValid;
   }
 
   /**
-     * Sets that the amount is not valid anymore.
-     */
-  setNotValid():void {
-    this._isValid = false;
+   * Checks if both amounts currencies matches and
+   * if both amounts are still valid.
+   *
+   * @param {Amount} a - Amount to check against.
+   *
+   * @return {bool}
+   */
+  private _matchAndAmounts(a: Amount): bool {
+    return this._currency == a.currency() && this._isValid && a.isValid();
   }
 
   /**
-     * Checks if both amounts currencies matches and
-     * if both amounts are still valid.
-     *
-     * @param {Amount} a - Amount to check against.
-     *
-     * @return {bool}
-     */
-  matchAndAmounts(a: Amount):bool {
-    return this._currency.sameAs(a.currency()) &&
-                this.isValid() &&
-             a.isValid();
-  }
-
-  /**
-     * Adds two amounts and return results in a new one.
-     *
-     * WARNING : return amount may be invalid. You shall verify isNot value.
-     *
-     * @param {Amount} a - Amout to add.
-     *
-     * @return {Amount}
-     */
-  add(a: Amount):Amount {
-    if (!this.matchAndAmounts(a)) {
+   * Adds two amounts and return results in a new one.
+   *
+   * WARNING : return amount may be invalid. You shall verify isNot value.
+   *
+   * @param {Amount} a - Amout to add.
+   *
+   * @return {Amount}
+   */
+  add(a: Amount): Amount {
+    if (!this._matchAndAmounts(a)) {
       return notAnAmount;
     }
 
@@ -95,14 +94,14 @@ export class Amount implements Valider {
   }
 
   /**
-     * Substact given amount from existing one.
-     *
-     * @param {Amount} a - Amount to substract.
-     *
-     * @return {Amount}
-     */
-  substract(a: Amount):Amount {
-    if (!this.matchAndAmounts(a) || this.lessThan(a)) {
+   * Substact given amount from existing one.
+   *
+   * @param {Amount} a - Amount to substract.
+   *
+   * @return {Amount}
+   */
+  substract(a: Amount): Amount {
+    if (!this._matchAndAmounts(a) || this.lessThan(a)) {
       return notAnAmount;
     }
 
@@ -110,16 +109,99 @@ export class Amount implements Valider {
   }
 
   /**
-     * Check if existent amount is lower than given one.
-     *
-     * @param {Amount} a - Amount to check against.
-     *
-     * @return {bool}
-     */
-  lessThan(a: Amount):bool {
+   * Check if existent amount is lower than given one.
+   *
+   * @param {Amount} a - Amount to check against.
+   *
+   * @return {bool}
+   */
+   @operator('<')
+  lessThan(a: Amount): bool {
     return this._value < a.value();
+  }
+
+   /**
+   * Returns an Amount from a byte string.
+   *
+   * Format is:
+   * - 8 bytes for value
+   * - 2+ bytes for currency
+   *
+   * @param {string} bs - Byte string
+   *
+   * @return {Amount}
+   */
+   static fromByteString(bs: string): Amount {
+     const a = ByteArray.fromByteString(bs);
+
+     return this.fromByteArray(a);
+   }
+
+   /**
+   * Returns an Amount from a byte array.
+   *
+   * Format is:
+   * - 8 bytes for value
+   * - 2+ bytes for currency
+   *
+   * @param {string} a - Byte array
+   *
+   * @return {Amount}
+   */
+   static fromByteArray(a: Uint8Array): Amount {
+     if (a.length < 10) {
+       return notAnAmount;
+     }
+
+     const value = ByteArray.fromUint8Array(a.subarray(0, 8)).toU64();
+     const currency = Currency.fromByteArray(a.subarray(8));
+
+     if (!currency.isValid()) {
+       return notAnAmount;
+     }
+
+     return new Amount(value, currency);
+   }
+
+   /**
+   * Serialize to ByteArray.
+   * @return {ByteArray}
+   */
+   toByteArray(): ByteArray {
+     if (!this.isValid) {
+       return new ByteArray(0);
+     }
+
+     const ba = ByteArray.fromU64(this._value);
+
+     return ba.concat(this._currency.toByteArray());
+   }
+
+  /**
+   * Tests if two amounts are identical.
+   *
+   * @param {Amount} other
+   * @return {boolean}
+   */
+  @operator('==')
+   equals(other: Amount): boolean {
+     if (!this._isValid || !other.isValid()) {
+       return false;
+     }
+
+     return this._currency == other.currency() && this._value == other.value();
+   }
+
+  /**
+   * Tests if two amounts are different.
+   *
+   * @param {Amount} other
+   * @return {boolean}
+   */
+  @operator('!=')
+  notEqual(other: Amount): boolean {
+    return !(this == other);
   }
 }
 
-const notAnAmount = new Amount();
-notAnAmount.setNotValid();
+const notAnAmount = new Amount(0, new Currency(), false);
