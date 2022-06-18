@@ -129,7 +129,8 @@ export class Amount implements Valider {
   }
 
    /**
-   * Returns the offset of the next element after having parsed an address from a string segment.
+   * Returns the offset of the next element after having parsed
+   * an address from a string segment.
    *
    * The string segment can contains more thant on serialized element.
    *
@@ -149,7 +150,8 @@ export class Amount implements Valider {
    /**
     * Returns a string segment.
     *
-    * The string segment can be concatenated with others to serialize multiple elements.
+    * The string segment can be concatenated with others
+    * to serialize multiple elements.
     *
     * @return {string}
     */
