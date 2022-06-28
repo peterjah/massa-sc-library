@@ -1,2 +1,5 @@
-export * from './erc20/erc20';
-export * from './erc20/erc20w';
+import * as StandardToken from './std/impl';
+import {TokenWrapper} from './std/wrapper';
+
+export {StandardToken};
+export {TokenWrapper};
