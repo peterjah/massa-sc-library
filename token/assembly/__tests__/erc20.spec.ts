@@ -1,10 +1,11 @@
 import * as token from '../std/impl';
 // TODO change relative path to cleaner import
 import {setData} from '../../node_modules/mscl-vm-mock/assembly/storage';
+import {console} from 'as-console';
 
 describe('Black box tests', () => {
   it('should expose token name', () => {
-    expect<string>(token.name()).toBe('Massa ERC20 token');
+    expect<string>(token.name('')).toBe('Standard token implementation');
   });
 
   it('should return 0 for initialized balance', () => {
@@ -13,9 +14,11 @@ describe('Black box tests', () => {
 
   it('should return initialized balance', () => {
     setData('balXXXaddress-1XXX', '1000');
-    expect<string>(token.balanceOf('XXXaddress-1XXX')).toBe(
-        '1000',
-        'initialized balance not working'
+
+    console.log(token.balanceOf('balXXXaddress-1XXX'));
+    expect<string>(token.balanceOf('balXXXaddress-1XXX')).toBe(
+      '1000',
+      'initialized balance not working'
     );
   });
 });

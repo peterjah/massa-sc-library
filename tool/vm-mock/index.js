@@ -13,8 +13,8 @@ let m = Object();
  */
 function createMockVm(memory, createImports, instantiateSync, binary) {
   let wasm;
-  const ConsoleImport = require('as-console/imports')
-  const Console = new ConsoleImport()
+  const ConsoleImport = require('as-console/imports');
+  const Console = new ConsoleImport();
   const myImports = {
     ...Console.wasmImports,
     massa: {
@@ -30,17 +30,20 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
       // See assembly_script_get_data, it's read and return string.
       assembly_script_has_data(k_ptr) {
         const k = wasm.__getString(k_ptr);
+        console.log('has_data key=', k, k in m);
         return k in m;
       },
       assembly_script_get_data(k_ptr) {
         const k = wasm.__getString(k_ptr);
+        console.log(`get_data key=${k} val=${m[k]}`);
         const v_ptr = wasm.__newString(m[k]);
         return v_ptr;
       },
       set_data(k_ptr, v_ptr) {
-        console.log("SET DATA!!")
         const k = wasm.__getString(k_ptr);
         const v = wasm.__getString(v_ptr);
+        console.log(`set_data key=${k} val=${v}`);
+
         m[k] = v;
       },
     },

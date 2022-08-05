@@ -21,11 +21,12 @@
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "mscl-vm-mock": "https://gitpkg.now.sh/massalabs/massa-sc-library/tool/vm-mock?main",
+    "mscl-vm-mock": "https://gitpkg.now.sh/peterjah/massa-sc-library/tool/vm-mock?console",
     "prettier": "^2.6.1",
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "as-console": "^6.0.2",
     "massa-sc-std": "^4.0.1",
     "mscl-type": "https://gitpkg.now.sh/massalabs/massa-sc-library/type?main"
   }

@@ -1,9 +1,4 @@
-import {
-  Address,
-  Storage,
-  Context,
-  generateEvent,
-} from 'massa-sc-std';
+import {Address, Storage, Context, generateEvent} from 'massa-sc-std';
 import {ByteArray} from 'mscl-type';
 
 const TRANSFER_EVENT_NAME = 'TRANSFER';
@@ -27,7 +22,8 @@ export function createEvent(key: string, args: Array<string>): string {
  * @param {string} _ - unused see https://github.com/massalabs/massa-sc-std/issues/18
  * @return {string}
  */
-export function version(_: string): string { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function version(_: string): string {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return '0.0.0';
 }
 
@@ -41,7 +37,8 @@ export function version(_: string): string { // eslint-disable-line @typescript-
  * @param {string} _ - unused see https://github.com/massalabs/massa-sc-std/issues/18
  * @return {string} token name.
  */
-export function name(_: string): string { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function name(_: string): string {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return 'Standard token implementation';
 }
 
@@ -50,7 +47,8 @@ export function name(_: string): string { // eslint-disable-line @typescript-esl
  * @param {string} _ - unused see https://github.com/massalabs/massa-sc-std/issues/18
  * @return {string} token symbol.
  */
-export function symbol(_: string): string { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function symbol(_: string): string {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return 'STI';
 }
 
@@ -62,7 +60,8 @@ export function symbol(_: string): string { // eslint-disable-line @typescript-e
  * @param {string} _ - unused see https://github.com/massalabs/massa-sc-std/issues/18
  * @return {string} - u64
  */
-export function totalSupply(_: string): string { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function totalSupply(_: string): string {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return '10000';
 }
 
@@ -73,7 +72,8 @@ export function totalSupply(_: string): string { // eslint-disable-line @typescr
  * @param {string} _ - unused see https://github.com/massalabs/massa-sc-std/issues/18
  * @return {string}
  */
-export function decimals(_: string): string { // eslint-disable-line @typescript-eslint/no-unused-vars
+export function decimals(_: string): string {
+  // eslint-disable-line @typescript-eslint/no-unused-vars
   return '2';
 }
 
@@ -90,7 +90,6 @@ export function decimals(_: string): string { // eslint-disable-line @typescript
  */
 export function balanceOf(args: string): string {
   const addr = Address.fromByteString(args);
-
   const r = addr.isValid() ? _balance(addr) : <u64>NaN;
   return r.toString();
 }
@@ -103,9 +102,7 @@ export function balanceOf(args: string): string {
  * @return {u64}
  */
 function _balance(address: Address): u64 {
-  const bal = Storage.hasItem(address.toByteString()) ?
-  Storage.getItem(address.toByteString()) :
-  '0';
+  const bal = Storage.has(address.toByteString()) ? Storage.get(address.toByteString()) : '0';
 
   return U64.parseInt(bal, 10);
 }
@@ -118,7 +115,7 @@ function _balance(address: Address): u64 {
  *
  */
 function _setBalance(address: Address, balance: u64): void {
-  Storage.setItem(address.toByteString(), balance.toString());
+  Storage.set(address.toByteString(), balance.toString());
 }
 
 // ==================================================== //
@@ -209,9 +206,9 @@ export function allowance(args: string): string {
   spenderAddress.fromStringSegment(args, offset);
 
   const r =
-    ownerAddress.isValid() && spenderAddress.isValid() ?
-    _allowance(ownerAddress, spenderAddress) :
-    <u64>NaN;
+    ownerAddress.isValid() && spenderAddress.isValid()
+      ? _allowance(ownerAddress, spenderAddress)
+      : <u64>NaN;
 
   return r.toString();
 }
@@ -226,7 +223,7 @@ export function allowance(args: string): string {
  */
 function _allowance(ownerAddress: Address, spenderAddress: Address): u64 {
   const k = ownerAddress.toByteString().concat(spenderAddress.toByteString());
-  const allow = Storage.hasItem(k) ? Storage.getItem(k) : '0';
+  const allow = Storage.has(k) ? Storage.get(k) : '0';
 
   return U64.parseInt(allow, 10);
 }
@@ -323,15 +320,8 @@ export function decreaseAllowance(args: string): string {
  * @param {u64} amount - amount to set an allowance for
  *
  */
-function _approve(
-    ownerAddress: Address,
-    spenderAddress: Address,
-    amount: u64
-): void {
-  Storage.setItem(
-      ownerAddress.toByteString().concat(spenderAddress.toByteString()),
-      amount.toString()
-  );
+function _approve(ownerAddress: Address, spenderAddress: Address, amount: u64): void {
+  Storage.set(ownerAddress.toByteString().concat(spenderAddress.toByteString()), amount.toString());
 }
 
 /**

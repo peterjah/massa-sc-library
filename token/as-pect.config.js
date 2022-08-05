@@ -25,7 +25,8 @@ module.exports = {
    * Add your required AssemblyScript imports here.
    */
   imports(memory, createImports, instantiateSync, binary) {
-    const createMockVm = require('mscl-vm-mock');
+    // eslint-disable-next-line
+    const createMockVm = require('../tool/vm-mock');
     return createMockVm(memory, createImports, instantiateSync, binary);
   },
   /** Enable code coverage. */
