@@ -13,7 +13,10 @@ let m = Object();
  */
 function createMockVm(memory, createImports, instantiateSync, binary) {
   let wasm;
+  const ConsoleImport = require('as-console/imports')
+  const Console = new ConsoleImport()
   const myImports = {
+    ...Console.wasmImports,
     massa: {
       // Those functions will be called from an external WebAssembly module.
       // Head objects, such as strings, can only be accessed by reading
@@ -35,6 +38,7 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
         return v_ptr;
       },
       set_data(k_ptr, v_ptr) {
+        console.log("SET DATA!!")
         const k = wasm.__getString(k_ptr);
         const v = wasm.__getString(v_ptr);
         m[k] = v;
@@ -42,6 +46,7 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
     },
   };
   let instance = instantiateSync(binary, createImports(myImports));
+  Console.wasmExports = instance.exports;
   wasm = instance.exports;
 
   return instance;
