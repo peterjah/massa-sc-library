@@ -1,7 +1,8 @@
 import * as token from '../std/impl';
 // TODO change relative path to cleaner import
-import {setData} from '../../node_modules/mscl-vm-mock/assembly/storage';
+import { setDataOf } from '../../../tool/vm-mock/assembly/storage';
 import {console} from 'as-console';
+import {Context} from 'massa-sc-std';
 
 describe('Black box tests', () => {
   it('should expose token name', () => {
@@ -13,8 +14,8 @@ describe('Black box tests', () => {
   });
 
   it('should return initialized balance', () => {
-    setData('balXXXaddress-1XXX', '1000');
-
+    const tokenAddr = Context.callee();
+    setDataOf(tokenAddr.toByteString(), 'balXXXaddress-1XXX', '1000');
     console.log(token.balanceOf('balXXXaddress-1XXX'));
     expect<string>(token.balanceOf('balXXXaddress-1XXX')).toBe(
       '1000',

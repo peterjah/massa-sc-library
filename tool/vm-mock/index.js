@@ -46,6 +46,36 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
 
         m[k] = v;
       },
+      set_data_for(addr, k_ptr, v_ptr) {
+        const sc = wasm.__getString(addr);
+        const k = wasm.__getString(k_ptr);
+        const v = wasm.__getString(v_ptr);
+        console.log(`set_data_for addr=${sc} key=${k} val=${v}`);
+        const scStorage = m[sc];
+        if (!scStorage) {
+          m = {...m, [sc]: {[k]: v}};
+        } else {
+          scStorage = {...scStorage, [k]: v};
+          m[sc] = scStorage;
+        }
+      },
+      assembly_script_has_data_for(addr, k_ptr) {
+        const k = wasm.__getString(k_ptr);
+        const sc = wasm.__getString(addr);
+        console.log(`has_data_for addr=${sc} key=${k}`, !!m[sc] && k in m[sc]);
+        return !!m[sc] && k in m[sc];
+      },
+      assembly_script_get_data_for(addr, k_ptr) {
+        const k = wasm.__getString(k_ptr);
+        const sc = wasm.__getString(addr);
+        console.log(`get_data_for addr=${addr} key=${k} val=${m[sc][k]}`);
+        const v_ptr = wasm.__newString(m[sc][k]);
+        return v_ptr;
+      },
+      assembly_script_get_call_stack() {
+        console.log(`get_call_stack`);
+        return wasm.__newString('{[callee_sc_address]}');
+      },
     },
   };
   let instance = instantiateSync(binary, createImports(myImports));
