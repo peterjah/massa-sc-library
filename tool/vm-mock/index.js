@@ -55,8 +55,8 @@ function createMockVm(memory, createImports, instantiateSync, binary) {
         if (!scStorage) {
           m = {...m, [sc]: {[k]: v}};
         } else {
-          scStorage = {...scStorage, [k]: v};
-          m[sc] = scStorage;
+          const newState = {...scStorage, [k]: v};
+          m[sc] = newState;
         }
       },
       assembly_script_has_data_for(addr, k_ptr) {
