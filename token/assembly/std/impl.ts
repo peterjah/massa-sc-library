@@ -102,7 +102,10 @@ export function balanceOf(args: string): string {
  * @return {u64}
  */
 function _balance(address: Address): u64 {
-  const bal = Storage.has(address.toByteString()) ? Storage.get(address.toByteString()) : '0';
+  const tokenAddr = Context.callee();
+  const bal = Storage.hasOf(tokenAddr, address.toByteString())
+    ? Storage.getOf(tokenAddr, address.toByteString())
+    : '0';
 
   return U64.parseInt(bal, 10);
 }
@@ -115,7 +118,8 @@ function _balance(address: Address): u64 {
  *
  */
 function _setBalance(address: Address, balance: u64): void {
-  Storage.set(address.toByteString(), balance.toString());
+  const tokenAddr = Context.callee();
+  Storage.setOf(tokenAddr, address.toByteString(), balance.toString());
 }
 
 // ==================================================== //
@@ -222,8 +226,9 @@ export function allowance(args: string): string {
  * @return {u64} the allowance
  */
 function _allowance(ownerAddress: Address, spenderAddress: Address): u64 {
+  const tokenAddr = Context.callee();
   const k = ownerAddress.toByteString().concat(spenderAddress.toByteString());
-  const allow = Storage.has(k) ? Storage.get(k) : '0';
+  const allow = Storage.hasOf(tokenAddr, k) ? Storage.getOf(tokenAddr, k) : '0';
 
   return U64.parseInt(allow, 10);
 }
@@ -321,7 +326,12 @@ export function decreaseAllowance(args: string): string {
  *
  */
 function _approve(ownerAddress: Address, spenderAddress: Address, amount: u64): void {
-  Storage.set(ownerAddress.toByteString().concat(spenderAddress.toByteString()), amount.toString());
+  const tokenAddr = Context.callee();
+  Storage.setOf(
+    tokenAddr,
+    ownerAddress.toByteString().concat(spenderAddress.toByteString()),
+    amount.toString()
+  );
 }
 
 /**
